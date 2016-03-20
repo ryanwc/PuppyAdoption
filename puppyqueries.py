@@ -45,6 +45,6 @@ def getPuppiesByShelter():
     """Return all puppies grouped by shelter
     """
     session = getPuppyDBSession()
-    puppiesBySheler = session.query(Puppy).group_by(shelter_id).all()
+    puppiesByShelter = session.query(Puppy).group_by(shelter_id).all()
     session.close()
-    return
+    return puppiesByShelter
