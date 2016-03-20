@@ -29,7 +29,7 @@ def getYoungestPuppies():
     session = getPuppyDBSession()
     today = datetime.date.today()
     sixMonthsAgo = today - datetime.timedelta(days = 182)
-    youngestPuppies = session.query(Puppy).filter(Puppy.dateOfBirth<=sixMonthsAgo).order_by(Puppy.dateOfBirth)
+    youngestPuppies = session.query(Puppy).filter(Puppy.dateOfBirth>=sixMonthsAgo).order_by(Puppy.dateOfBirth)
     session.close()
     return youngestPuppies
 
