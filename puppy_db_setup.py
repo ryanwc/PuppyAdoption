@@ -1,5 +1,4 @@
 import sys
-import psycopg2
 
 # import functionality from sqlalchemy
 from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric
