@@ -17,21 +17,24 @@ def getPuppiesByName():
     """Return all puppies in ascending alphabetical order
     """
     session = getPuppyDBSession()
-    
-    return
+    puppiesByName = session.query(Puppy).order_by(name)
+    session.close()
+    return puppiesByName
 
 def getYoungestPuppies():
     """Return all puppies less than 6 months old in ascending order by age
     """
     session = getPuppyDBSession()
-    
-    return
+
+    session.close()
+    return 
 
 def getPuppiesByWeight():
     """Retrun all puppies in ascending order by weight
     """
     session = getPuppyDBSession()
     
+    session.close()
     return
 
 def getPuppiesByShelter():
@@ -39,4 +42,5 @@ def getPuppiesByShelter():
     """
     session = getPuppyDBSession()
     
+    session.close()
     return
