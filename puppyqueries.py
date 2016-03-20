@@ -19,7 +19,7 @@ def getPuppiesByName():
     """Return all puppies in ascending alphabetical order
     """
     session = getPuppyDBSession()
-    puppiesByName = session.query(Puppy).order_by(name).all()
+    puppiesByName = session.query(Puppy).order_by(Puppy.name)
     session.close()
     return puppiesByName
 
@@ -29,7 +29,7 @@ def getYoungestPuppies():
     session = getPuppyDBSession()
     today = datetime.date.today()
     sixMonthsAgo = today - datetime.timedelta(days = 182)
-    youngestPuppies = session.query(Puppy).filter(Puppy.dateOfBirth<=sixMonthsAgo).order_by(dateOfBirth).all()
+    youngestPuppies = session.query(Puppy).filter(Puppy.dateOfBirth<=sixMonthsAgo).order_by(Puppy.dateOfBirth)
     session.close()
     return youngestPuppies
 
@@ -37,14 +37,14 @@ def getPuppiesByWeight():
     """Retrun all puppies in ascending order by weight
     """
     session = getPuppyDBSession()
-    puppiesByWeight = session.query(Puppy).order_by(weight).all()
+    puppiesByWeight = session.query(Puppy).order_by(Puppy.weight)
     session.close()
     return puppiesByWeight
 
 def getPuppiesByShelter():
-    """Return all puppies grouped by shelter
+    """Return all puppies ordered by shelter
     """
     session = getPuppyDBSession()
-    puppiesByShelter = session.query(Puppy).group_by(shelter_id).all()
+    puppiesByShelter = session.query(Puppy).order_by(Puppy.shelter_id)
     session.close()
     return puppiesByShelter

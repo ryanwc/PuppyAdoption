@@ -18,7 +18,7 @@ class Shelter(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String(250), nullable=False)
 	address = Column(String(250), nullable=False)
-	city = Column(String(30), nullable=False)
+	city = Column(String(80), nullable=False)
 	state = Column(String(30), nullable=False)
 	zipCode = Column(String(10), nullable=False)
 	website = Column(String)
@@ -27,9 +27,9 @@ class Puppy(Base):
 	__tablename__ = 'puppy'
 
 	id = Column(Integer, primary_key=True)
-	name = Column(String(30), nullable=False)
+	name = Column(String(250), nullable=False)
 	dateOfBirth = Column(Date)
-	gender = Column(String(1), nullable = False)
+	gender = Column(String(6), nullable = False)
 	weight = Column(Numeric(10))
 	picture = Column(String)
 	shelter_id = Column(Integer, ForeignKey('shelter.id'))
