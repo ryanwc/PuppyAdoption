@@ -34,9 +34,9 @@ def getPuppiesByWeight():
     """Retrun all puppies in ascending order by weight
     """
     session = getPuppyDBSession()
-    
+    puppiesByWeight = session.query(Puppy).order_by(weight)
     session.close()
-    return
+    return puppiesByWeight
 
 def getPuppiesByShelter():
     """Return all puppies grouped by shelter
