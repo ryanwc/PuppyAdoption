@@ -29,7 +29,7 @@ def getYoungestPuppies():
     session = getPuppyDBSession()
     today = datetime.date.today()
     sixMonthsAgo = today - datetime.timedelta(days = 182)
-    youngestPuppies = session.query(Puppy).filter(Puppy.dateOfBirth<=sixMonthsAgo).order_by(dateOfBirth).()
+    youngestPuppies = session.query(Puppy).filter(Puppy.dateOfBirth<=sixMonthsAgo).order_by(dateOfBirth).all()
     session.close()
     return youngestPuppies
 
@@ -45,6 +45,6 @@ def getPuppiesByShelter():
     """Return all puppies grouped by shelter
     """
     session = getPuppyDBSession()
-    puppiesBySheler = session.query(Puppy).group_by(shelter_id)
+    puppiesBySheler = session.query(Puppy).group_by(shelter_id).all()
     session.close()
     return
