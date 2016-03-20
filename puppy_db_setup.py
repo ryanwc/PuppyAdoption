@@ -2,7 +2,7 @@ import sys
 import psycopg2
 
 # import functionality from sqlalchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, Date
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -22,7 +22,7 @@ class Shelter(Base):
 	city = Column(String(30), nullable=False)
 	state = Column(String(30), nullable=False)
 	zipCode = Column(String(10), nullable=False)
-	website = Column(String(250))
+	website = Column(String)
 
 class Puppy(Base):
 	__tablename__ = 'puppy'
@@ -31,7 +31,8 @@ class Puppy(Base):
 	name = Column(String(30), nullable=False)
 	dateOfBirth = Column(Date)
 	gender = Column(String(1), nullable = False)
-	weight = Column(String(30))
+	weight = Column(Numeric(10))
+	picture = Column(String)
 	shelter_id = Column(Integer, ForeignKey('shelter.id'))
 	shelter = relationship(Shelter)
 
