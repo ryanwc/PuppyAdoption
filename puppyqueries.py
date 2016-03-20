@@ -25,9 +25,10 @@ def getYoungestPuppies():
     """Return all puppies less than 6 months old in ascending order by age
     """
     session = getPuppyDBSession()
-
+    today = datetime.date.today()
+    youngestPuppies = session.query(Puppy).filter(Puppy.dateOfBirth-today<=182).order_by(dateOfBirth)
     session.close()
-    return 
+    return youngestPuppies
 
 def getPuppiesByWeight():
     """Retrun all puppies in ascending order by weight
