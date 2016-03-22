@@ -22,6 +22,7 @@ class Shelter(Base):
         city = Column(String(80), nullable=False)
         state = Column(String(30), nullable=False)
         zipCode = Column(String(10), nullable=False)
+        capacity = Column(Integer, nullabel=False)
         website = Column(String)
 
         puppies = relationship("Puppy")
