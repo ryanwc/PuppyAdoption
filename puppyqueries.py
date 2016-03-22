@@ -65,9 +65,22 @@ def getNumPuppiesByShelter():
     """
     session getPuppyDBSession()
 
-    numPuppiesByShelter = session.query(func.count(Puppy.name)).\
+    numPuppiesByShelter = session.query(func.count(Puppy)).\
                           group_by(Puppy.shelter_id)
 
     session.close()
     return numPuppiesByShelter
 
+def getLeastFilledShelter():
+    """Return the id of the shelter with the most free space for puppies
+    """
+    session getPuppyDBSession()
+
+    numPuppiesByShelter = getNumPuppiesByShelter()
+    shelterFullness = [shelter.count/session.query(Shelter.capacity).\
+                         filter(Shelter.id==shelter.shelter_id) \
+                         for shelter in numPuppiesByShelter]
+    leastFilledShelter = min(shelterFullness)
+    
+    session.close()
+    return leastFilledShelter
