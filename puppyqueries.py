@@ -6,7 +6,7 @@ from puppy_db_setup import Base, Shelter, Puppy
 import datetime
 
 
-def getPuppyDBSession():
+def getPupDBSession():
     """Return an interactive session with the puppy adoption database
     """
     engine = create_engine('sqlite:///puppyadoption.db')
@@ -15,21 +15,21 @@ def getPuppyDBSession():
     session = DBSession()
     return session
 
-def getPuppiesByName():
+def getPupsByName():
     """Return a list all puppies in ascending alphabetical order
     """
-    session = getPuppyDBSession()
+    session = getPupDBSession()
     
     puppiesByName = session.query(Puppy).order_by(Puppy.name)
     
     session.close()
     return puppiesByName
 
-def getYoungestPuppies():
+def getYoungestPups():
     """Return a list of all puppies less than 6 months old in ascending
         order by age
     """
-    session = getPuppyDBSession()
+    session = getPupDBSession()
     
     today = datetime.date.today()
     sixMonthsAgo = today - datetime.timedelta(days = 182)
@@ -40,30 +40,30 @@ def getYoungestPuppies():
     session.close()
     return youngestPuppies
 
-def getPuppiesByWeight():
+def getPupsByWeight():
     """Retrun a list of all puppies in ascending order by weight
     """
-    session = getPuppyDBSession()
+    session = getPupDBSession()
 
     puppiesByWeight = session.query(Puppy).order_by(Puppy.weight)
 
     session.close()
     return puppiesByWeight
 
-def getPuppiesByShelter():
+def getPupsByShelt():
     """Return a list of all puppies ordered by shelter
     """
-    session = getPuppyDBSession()
+    session = getPupDBSession()
 
     puppiesByShelter = session.query(Puppy).order_by(Puppy.shelter_id)
 
     session.close()
     return puppiesByShelter
 
-def getNumPuppiesByShelter():
+def getNumPupsByShelt():
     """Return a list with number of puppies in each shelter
     """
-    session = getPuppyDBSession()
+    session = getPupDBSession()
 
     shelterIDs = session.query(distinct(Puppy.shelter_id))
     numPuppiesByShelter = []
@@ -77,19 +77,19 @@ def getNumPuppiesByShelter():
     session.close()
     return numPuppiesByShelter
 
-def getShelterFullness():
+def getSheltFullness():
     """Return the id of the shelter with the most free space for puppies
     """
-    session = getPuppyDBSession()
+    session = getPupDBSession()
 
-    numPuppiesByShelter = getNumPuppiesByShelter()
+    numPuppiesByShelter = getNumPupsByShelt()
     shelterFullness = []
     
     for shelter in numPuppiesByShelter:
         shelterCapacity = session.query(Shelter.capacity).\
                           filter(Shelter.id==shelter['shelter_id']).first()[0]
         tupleToAdd = {'shelter_id': shelter['shelter_id'],
-                      'fullness': (shelter['numOfPups'] / float(shelterCapacity))}
+                      'percentFull': (shelter['numOfPups'] / float(shelterCapacity))}
         shelterFullness.append(tupleToAdd)
     
     session.close()
