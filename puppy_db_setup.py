@@ -22,7 +22,7 @@ class Shelter(Base):
         city = Column(String(80), nullable=False)
         state = Column(String(30), nullable=False)
         zipCode = Column(String(10), nullable=False)
-        capacity = Column(Integer, nullabel=False)
+        capacity = Column(Integer, nullable=False)
         website = Column(String)
 
         puppies = relationship("Puppy")
@@ -37,7 +37,7 @@ class Puppy(Base):
         gender = Column(String(6), nullable = False)
         weight = Column(Numeric(10))
         picture = Column(String)
-        shelter_id = Column(Integer, ForeignKey('shelter.id'))
+        shelter_id = Column(Integer, ForeignKey('shelter.id'), nullable=False)
 
         adopter = relationship("Adopter", uselist=False, back_populates="puppy")
 
@@ -48,8 +48,8 @@ class Adopter(Base):
                 PrimaryKeyConstraint('person_id', 'puppy_id'),
         )
 
-        person_id = Column(Integer, ForeignKey('person.id'))
-        puppy_id = Column(Integer, ForeignKey('puppy.id'))
+        person_id = Column(Integer, ForeignKey('person.id'), nullable=False)
+        puppy_id = Column(Integer, ForeignKey('puppy.id'), nullable=False)
 
         puppy = relationship("Puppy", back_populates="Puppy")
 
@@ -59,7 +59,7 @@ class Person(Base):
 
         id = Column(Integer, primary_key=True)
         name = Column(String(250), nullable=False)
-        household_id = Column(Integer, ForeignKey('household.id'))
+        household_id = Column(Integer,ForeignKey('household.id'),nullable=False)
         #headOfHousehold = Column(Boolean, nullable=False)
 
         adoptions = relationship("Adopter")
