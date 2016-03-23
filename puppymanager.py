@@ -4,58 +4,148 @@ from sqlalchemy.orm import sessionmaker
 from puppy_db_setup import Base, Shelter, Puppy
 import puppyqueries
 
-import datetime
+import time, datetime
 
-def addPuppyToShelter(name, gender, dateOfBirth, picture, shelter_id, weight):
+def addPuppyToShelter(PuppyInfo):
     """Insert a puppy into the adoption database
 
     Args:
-      name: the puppy's name
-      gender: the puppy's gender
-      dateOfBirth: puppy's birthday
-      picture: a web address of a picture of the puppy
-      shelter_id: the id of the shelter where the function caller wants the
-          puppy to live
-      weight: the puppy's weight
+      PuppyInfo: List of puppy attributes
+          Required attributes (cannot be None): name, gender, shelter_id
+          Optional attributes (can be None): dateOfBirth, picture, weight
+    Return:
+      True if puppy was successfully added to the database
+      False if puppy was not added to the database
     """
     session = getPuppyDBSession()
-        
-    if (name is None or not isinstance(name,str) or len(name) > 250):
-        print "Puppy name is not in the right format"
-        
-    if (gender is None or not isinstance(gender,str) or len(gender) > 6):
-        print "Gender of puppy is not in right format"
-        
-    if (dateOfBirth is None or not isinstance(dateOfBirth,datetime)):
-        print "Puppy date of birth is not in right format"
-        
-    if (picture is None or not isinstance(picture, str)):
-        print "Picture is not in the right format"
-        
-    if (shelter_id is None or not isinstance(shelter_id,Integer)):
-        print "Shelter ID is not in the right format"
-        
-    if (weight is None or
-        not (isinstance(weight,str) or isinstance(weight,Integer)) or
-        len(str(weight)) > 10):
-        print "Weight is not in the right format"
-        
 
+    # prep steps; find best shelter based on fullness
     numPuppiesByShelter = puppyqueries.getNumPuppiesByShelter()
     shelterIDs = [shelter.shelter_id for shelter in numPuppiesByShelter]
-    leastFilledShelter = puppyqueries.getLeastFilledShelter()
+    shelterFullness = puppyqueries.getShelterFullness()
 
-    if shelter_id in shelterIDs:
-        print "Given shelter ID does not exist, using this ID instead: "\
-              + leastFilledShelter
-    else if shelter_id != leastFilledShelter:
-        print "Using shelter " + leastFilledShelter + " instead of shelter "\
-              + shelter_id + " because shelter " + leastFilledShelter\
-              + "has the most capacity"
-    
-    new_puppy = Puppy(name,gender,dateOfBirth,picture,leastFilledShelter,weight)
+    leastFilledShelter = []
+
+    for shelter in shelterFullness:
+        if shelter[1] < 1:
+            if (len(leastFilledShelter) == 0 or
+                shelter[1] < leastFilledShelter[1]):
+                leastFilledShelter = [{"shelter_id": shelter[0], \
+                                       "percentFull": shelter[1]}]
+
+    # fail if all shelters are at capacity
+    if len(leastFilledShelter) < 1:
+        print "No space in any shelter! Puppy not added."
+        return False
+
+    # test/format name
+    if PuppyInfo.name is None:
+        while True:
+            print "Puppy name not provided"
+            name = raw_input("What is the puppy's name? ")
+            if (len(name)>0):
+                break
+        PuppyInfo.append(name)
+
+    while True:
+        if (not isinstance(PuppyInfo.name,str) or
+            len(PuppyInfo.name) > 250 or
+            len(PuppyInfo.name) < 1):
+            print "Puppy name not in right format"
+            PuppyInfo.name = raw_input("What is the puppy's name? ")
+        else:
+            break
+
+    # test/format gender
+    if PuppyInfo.gender is None:
+        while True:
+            print "Puppy gender not provided"
+            gender = raw_input("What is the puppy's gender? ")
+            if (len(gender)>0):
+                break
+        PuppyInfo.append(gender)
         
+    while True:
+        if (not isinstance(PuppyInfo.gender,str) or
+            len(PuppyInfo.gender) > 6 or
+            len(PuppyInfo.gender) < 1):
+            print "Puppy gender not provided or not in right format"
+            PuppyInfo.gender = raw_input("What is the puppy's gender? ")
+        else:
+            break
+
+    # test/format date of birth
+    while True:
+        if PuppyInfo.dateOfBirth is None:
+            break
+        else if not isinstance(PuppyInfo.dateOfBirth,datetime):
+            print "Puppy date of birth not in right format"
+            dateOfBirthStr = raw_input("What is the puppy's DOB (DD MM YY)? ")
+            dateOfBirthStruct = time.strptime(dateOfBirthStr, "%d %m %y")
+            PuppyInfo.dateOfBirth = datetime.\
+                                    fromtimestamp(mktime(dateofBirthStruct))
+        else:
+            break
+
+    # test/format picture
+    while True:
+        if PuppyInfo.picture is None:
+
+            break
+        else if not isinstance(picture, str):
+            print "Picture is not in the right format"
+            PuppyInfo.picture = raw_input("Provide URL to puppy's picture: ")
+        else:
+            break
+
+    # test/format shelter id (including balancing)
+    if PuppyInfo.shelter_id is None:
+        while True:
+            print "Shelter ID not provided"
+            shelter_str = raw_input("What is the ID of the shelter should the "\
+                                    "puppy should live at? ")
+            if (len(shelter_str)>0):
+                break
+        shelter_id = int(shelter_str)
+        PuppyInfo.append(shelter_id)
+
+    while True:
+        if not isinstance(PuppyInfo.shelter_id,int):
+            print "Shelter ID is invalid"
+        else if not PuppyInfo.shelter_id in shelterIDs:
+            PuppyInfo.shelter_id = int(raw_input("Given shelter ID does not "\
+                                                 "exist, please re-enter: "))
+        else if PuppyInfo.shelter_id != leastFilledShelter[0]:
+            print "Using shelter " + leastFilledShelter[0] + " instead of " \
+                  "shelter " + PuppyInfo.shelter_id + " because shelter "\
+                  + leastFilledShelter[0] + " has the most capacity"
+            PuppyInfo.shelter_id = leastFilledShelter[0]
+            break
+        else:
+            break
+            
+    # test/format weight
+    while True:
+        if PuppyInfo.weight is None:
+            break
+        else if isinstance(PuppyInfo.weight,str):
+            PuppyInfo.weight = int(PuppyInfo.weight)
+        else if (not isinstance(PuppyInfo.weight,int) or
+                 len(str(PuppyInfo.weight)) > 10 or
+                 len(str(PuppyInfo.weight)) < 1):
+            print "Weight is not in the right format"
+            weightStr = raw_input("What is the puppy's weight? ")
+            PuppyInfo.weight = int(weightStr)
+        else:
+            break
+
+    # insert the new puppy
+    new_puppy = Puppy(PuppyInfo.name,PuppyInfo.gender,\
+                      PuppyInfo.dateOfBirth,PuppyInfo.picture,\
+                      leastFilledShelter[0],PuppyInfo.weight)
     session.add(new_puppy)
     session.commit()
     
     session.close()
+        
+    return True
