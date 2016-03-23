@@ -71,7 +71,8 @@ def getNumPupsByShelt():
     for shelterID in shelterIDs:
         tupleToAdd = {"shelter_id": shelterID[0],
                       "numOfPups": session.query(Puppy.id).\
-                      filter(Puppy.shelter_id==shelterID[0]).count()}
+                      filter(Puppy.shelter_id==shelterID[0],\
+                             Puppy.adopted==False).count()}
         numPuppiesByShelter.append(tupleToAdd)
 
     session.close()

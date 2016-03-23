@@ -1,7 +1,7 @@
 import sys
 
 # import functionality from sqlalchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric, Boolean
 from sqlalchemy.schema import PrimaryKeyConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -36,6 +36,7 @@ class Puppy(Base):
         weight = Column(Integer)
         picture = Column(String)
         shelter_id = Column(Integer,ForeignKey('shelter.id'),nullable=False)
+        adopted = Column(Boolean, nullable = False)
 
 
 class Adopter(Base):

@@ -6,7 +6,7 @@ from puppyqueries import getPupDBSession, getSheltFullness, getNumPupsByShelt
 
 import time, datetime
 
-def addPuppyToShelter(PuppyInfo):
+def addPupToShelt(PuppyInfo):
     """Insert a puppy into the adoption database
 
     Args:
@@ -151,7 +151,8 @@ def addPuppyToShelter(PuppyInfo):
                       dateOfBirth = PuppyInfo['dateOfBirth'],\
                       picture = PuppyInfo['picture'],\
                       shelter_id = PuppyInfo['shelter_id'],\
-                      weight = PuppyInfo['weight'])
+                      weight = PuppyInfo['weight'],\
+                      adopted = False)
     session.add(new_puppy)
     session.commit()
     
