@@ -22,10 +22,8 @@ class Shelter(Base):
         city = Column(String(80), nullable=False)
         state = Column(String(30), nullable=False)
         zipCode = Column(String(10), nullable=False)
-        capacity = Column(Numeric(10), nullable=False)
+        capacity = Column(Integer, nullable=False)
         website = Column(String)
-
-        puppies = relationship("Puppy")
 
 
 class Puppy(Base):
@@ -35,11 +33,9 @@ class Puppy(Base):
         name = Column(String(250), nullable=False)
         dateOfBirth = Column(Date)
         gender = Column(String(6), nullable = False)
-        weight = Column(Numeric(10))
+        weight = Column(Integer)
         picture = Column(String)
-        shelter_id = Column(Integer, ForeignKey('shelter.id'), nullable=False)
-
-        adopter = relationship("Adopter", uselist=False, back_populates="puppy")
+        shelter_id = Column(Integer,ForeignKey('shelter.id'),nullable=False)
 
 
 class Adopter(Base):
@@ -51,8 +47,6 @@ class Adopter(Base):
         person_id = Column(Integer, ForeignKey('person.id'), nullable=False)
         puppy_id = Column(Integer, ForeignKey('puppy.id'), nullable=False)
 
-        puppy = relationship("Puppy", back_populates="Puppy")
-
 
 class Person(Base):
         __tablename__ = 'person'
@@ -61,8 +55,6 @@ class Person(Base):
         name = Column(String(250), nullable=False)
         household_id = Column(Integer,ForeignKey('household.id'),nullable=False)
         #headOfHousehold = Column(Boolean, nullable=False)
-
-        adoptions = relationship("Adopter")
 
 
 class Household(Base):
@@ -74,8 +66,6 @@ class Household(Base):
         city = Column(String(80), nullable=False)
         state = Column(String(30), nullable=False)
         zipCode = Column(String(10), nullable=False)
-
-        members = relationship("Person")
 
 
 # connect to database engine
