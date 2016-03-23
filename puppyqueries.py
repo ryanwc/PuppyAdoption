@@ -63,10 +63,16 @@ def getPuppiesByShelter():
 def getNumPuppiesByShelter():
     """Return a list with number of puppies in each shelter
     """
-    session getPuppyDBSession()
+    session = getPuppyDBSession()
 
-    numPuppiesByShelter = session.query(func.count(Puppy)).\
-                          group_by(Puppy.shelter_id)
+    shelterIDs = session.query(distinct(Puppy.shelter_id))
+    numPuppiesByShelter = []
+
+    for shelterID in shelterIDs:
+        tupleToAdd = {"shelter_id": shelterID[0],
+                      "numOfPups": session.query(Puppy.id).\
+                      filter(Puppy.shelter_id==shelterID[0]).count()}
+        numPuppiesByShelter.append(tupleToAdd)
 
     session.close()
     return numPuppiesByShelter
@@ -74,13 +80,17 @@ def getNumPuppiesByShelter():
 def getShelterFullness():
     """Return the id of the shelter with the most free space for puppies
     """
-    session getPuppyDBSession()
+    session = getPuppyDBSession()
 
     numPuppiesByShelter = getNumPuppiesByShelter()
-    shelterFullness = [(shelter.shelter_id,\
-                        shelter.count/session.query(Shelter.capacity).\
-                         filter(Shelter.id==shelter.shelter_id)) \
-                       for shelter in numPuppiesByShelter]
+    shelterFullness = []
+    
+    for shelter in numPuppiesByShelter:
+        shelterCapacity = session.query(Shelter.capacity).\
+                          filter(Shelter.id==shelter['shelter_id']).first()[0]
+        tupleToAdd = {'shelter_id': shelter['shelter_id'],
+                      'fullness': (shelter['numOfPups'] / float(shelterCapacity))}
+        shelterFullness.append(tupleToAdd)
     
     session.close()
     return shelterFullness
